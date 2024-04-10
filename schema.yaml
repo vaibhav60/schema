@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+  title: TTLC REST API
+  description: Documentation for the TTLC REST API
+  version: 1.0.0
+
+servers:
+  - url: http://DI2USMIF05026WH:8080
+
+paths:
+  /connect:
+    post:
+      summary: Endpoint for user login
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user
+                password:
+                  type: string
+                  description: The password of the user
+                group:
+                  type: string
+                  description: The group of the user
+                role:
+                  type: string
+                  description: The role of the user
+                tcServerUrl:
+                  type: string
+                  description: The Teamcenter server URL
+                appIdentifier:
+                  type: string
+                  description: The application identifier for integration
+      responses:
+        '200':
+          description: Successful login
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '401':
+          description: Unauthorized
+
+  /downloadItem/{uid}:
+    get:
+      summary: Endpoint for downloading files based on UID
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+            description: Unique identifier of the item to be downloaded
+      responses:
+        '200':
+          description: Successful file download
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
+        '404':
+          description: Item not found
+          
+  /uploadItem/{uid}:
+    post:
+      summary: Endpoint for uploading files based on UID
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+            description: Unique identifier of the item being uploaded
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: The files to upload
+      responses:
+        '200':
+          description: Successful file upload
+        '401':
+          description: Unauthorized
